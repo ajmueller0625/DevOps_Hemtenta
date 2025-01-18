@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo -i -u devops_hemtenta
-            cd /home/devops_hemtenta/DevOps_Hemtenta
+            cd /home/devops_hemtenta
 
             # Pull latest code
             git pull origin main
