@@ -37,7 +37,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-          
+
+            # Move to projekt directory 
             cd /home/devops_hemtenta/DevOps_Hemtenta
 
             # Pull latest code
