@@ -1,0 +1,58 @@
+name: deploy_devops_hemtenta
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/devops_hemtenta_backend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/devops_hemtenta_backend:latest
+          cache-to: type=inline
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/repetition/docker-test
+
+            # Pull latest code
+            git pull origin main
+
+            # Create .env file if it doesn't exist
+            if [ ! -f .env ]; then
+              sudo cp .env.example .env
+            fi
+
+            # Pull latest images
+            sudo docker compose pull
+
+            # Restart services
+            sudo docker compose down
+            sudo docker compose up -d --build -d
+
+            # Clean up old images
+            sudo docker image prune -f
