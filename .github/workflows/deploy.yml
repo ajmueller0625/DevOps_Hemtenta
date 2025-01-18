@@ -37,7 +37,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/repetition/docker-test
+            sudo -i -u devops_hemtenta
+            cd DevOps_Hemtenta
 
             # Pull latest code
             git pull origin main
