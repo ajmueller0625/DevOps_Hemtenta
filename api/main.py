@@ -37,7 +37,7 @@ stream_handler = logging.StreamHandler(sys.stdout)
 stream_handler.setFormatter(log_formatter)
 error_logger.addHandler(stream_handler)
 
-file_handler = logging.FileHandler("app.log", mode="a")
+file_handler = logging.FileHandler("/var/log/devops_hemtenta_app/app.log", mode="a")
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(log_formatter)
 error_logger.addHandler(file_handler)
