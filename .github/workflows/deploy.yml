@@ -38,22 +38,22 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo -i -u devops_hemtenta
-            cd DevOps_Hemtenta
+            cd /home/devops_hemtenta/DevOps_Hemtenta
 
             # Pull latest code
             git pull origin main
 
             # Create .env file if it doesn't exist
             if [ ! -f .env ]; then
-              sudo cp .env.example .env
+              cp .env.example .env
             fi
 
             # Pull latest images
-            sudo docker compose pull
+            docker compose pull
 
             # Restart services
-            sudo docker compose down
-            sudo docker compose up -d --build -d
+            docker compose down
+            docker compose up -d --build -d
 
             # Clean up old images
-            sudo docker image prune -f
+            docker image prune -f
