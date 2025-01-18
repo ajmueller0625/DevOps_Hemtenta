@@ -1,5 +1,6 @@
 import logging
 import sys
+import os
 from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -37,24 +38,26 @@ stream_handler = logging.StreamHandler(sys.stdout)
 stream_handler.setFormatter(log_formatter)
 error_logger.addHandler(stream_handler)
 
-file_handler = logging.FileHandler("/var/log/devops_hemtenta_app/app.log", mode="a")
+# Logging to /var/log/devops_hemtenta_app
+log_directory = "/var/log/devops_hemtenta_app"
+log_file_path = f"{log_directory}/app.log"
+
+# Ensure the log directory exists
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory, exist_ok=True)
+
+file_handler = logging.FileHandler(log_file_path, mode="a")
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(log_formatter)
 error_logger.addHandler(file_handler)
 
-# -------------------------
-# 2) Configure uvicorn.access (for request logs)
-# -------------------------
+# Configure uvicorn.access logger
 access_logger = logging.getLogger("uvicorn.access")
 access_logger.setLevel(logging.INFO)
-
-# reuse the same handlers so logs go to both console & file
 access_logger.addHandler(stream_handler)
 access_logger.addHandler(file_handler)
 
-# You can also log an info to see if it's working:
 access_logger.info("Configured uvicorn.access logger")
-
 error_logger.info("API is starting up")
 
 

@@ -29,6 +29,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./api:/api
+      - /var/log/devops_hemtenta_app:/var/log/devops_hemtenta_app
     networks:
       - webnet  # Ensure backend is on webnet
 
