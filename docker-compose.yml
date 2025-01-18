@@ -1,33 +1,61 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:16
-    container_name: devops_hemtenta_db
-    env_file:
-      - /etc/devops_hemtenta_env
+    container_name: devops_hemtenta_db_test
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5431:5432"
     volumes:
       - db_data_dev:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - webnet  # Connect db to webnet
 
   backend:
     build:
       context: ./api
       dockerfile: Dockerfile
     container_name: devops_hemtenta_app
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    command: bash -c "python3 setup.py && uvicorn main:app --host 0.0.0.0 --port 8000"
     ports:
       - "8000:8000"
     env_file:
-      - /etc/devops_hemtenta_env
+      - ./.env
     depends_on:
       - db
     restart: unless-stopped
-
     volumes:
       - ./api:/api
+    networks:
+      - webnet  # Ensure backend is on webnet
+
+  web:
+    image: httpd:alpine
+    container_name: web
+    networks:
+      - webnet
+    volumes:
+      - ./html:/usr/local/apache2/htdocs/
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./html:/usr/share/nginx/html
+    networks:
+      - webnet  # Ensure Nginx is on webnet
+    depends_on:
+      - web
 
 volumes:
   db_data_dev:
+
+networks:
+  webnet:
+    driver: bridge

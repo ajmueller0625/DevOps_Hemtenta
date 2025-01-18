@@ -10,7 +10,7 @@ def add_game_db(con, title: str, genre: str, platform: str, release_year: int):
             cursor.execute(
                 """
                     INSERT INTO games (title, genre, platform, release_year) 
-                    VALUES (%s, %s, %s, %s) RETURNING id"
+                    VALUES (%s, %s, %s, %s) RETURNING id;
                 """,
                 (title, genre, platform, release_year)
             )
@@ -24,7 +24,7 @@ def get_games_db(con):
         with con.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
                 """
-                    SELECT * FROM games
+                    SELECT * FROM games;
                 """
             )
             result = cursor.fetchall()
@@ -37,7 +37,7 @@ def get_game_db(con, game_id: int):
             cursor.execute(
                 """
                     SELECT * FROM games 
-                    WHERE id = %s
+                    WHERE id = %s;
                 """,
                 (game_id,)
             )
@@ -58,7 +58,7 @@ def update_game_db(con, game_id: int, title: str, genre: str, platform: str, rel
                     platform = %s,
                     release_year = %s
                     WHERE id = %s
-                    RETURNING id
+                    RETURNING id;
                 """,
                 (title, genre, platform, release_year, game_id)
             )
@@ -91,7 +91,7 @@ def add_developer_db(con, name: str, founded_year: int):
             cursor.execute(
                 """
                     INSERT INTO developers (name, founded_year) 
-                    VALUES (%s, %s) RETURNING id
+                    VALUES (%s, %s) RETURNING id;
                 """,
                 (name, founded_year)
             )
@@ -105,7 +105,7 @@ def get_developers_db(con):
         with con.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
                 """
-                    SELECT * FROM developers
+                    SELECT * FROM developers;
                 """
             )
             result = cursor.fetchall()
@@ -118,7 +118,7 @@ def add_publisher_db(con, name: str, country: str):
             cursor.execute(
                 """
                     INSERT INTO publishers (name, country) 
-                    VALUES (%s, %s) RETURNING id"
+                    VALUES (%s, %s) RETURNING id;
                 """,
                 (name, country)
             )
@@ -132,7 +132,7 @@ def get_publishers_db(con):
         with con.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
                 """
-                    SELECT * FROM publishers
+                    SELECT * FROM publishers;
                 """
             )
             result = cursor.fetchall()
@@ -145,7 +145,7 @@ def add_review_db(con, game_id: int, reviewer: str, rating: float, comment: str)
             cursor.execute(
                 """
                     INSERT INTO reviews (game_id, reviewer, rating, comment) 
-                    VALUES (%s, %s, %s, %s) RETURNING id
+                    VALUES (%s, %s, %s, %s) RETURNING id;
                 """,
                 (game_id, reviewer, rating, comment)
             )
@@ -160,7 +160,7 @@ def get_reviews_for_game_db(con, game_id: int):
             cursor.execute(
                 """
                     SELECT * FROM reviews 
-                    WHERE game_id = %s
+                    WHERE game_id = %s;
                 """,
                 (game_id,)
             )
@@ -176,7 +176,7 @@ def add_game_developer_db(con, game_id: int, developer_id: int):
             cursor.execute(
                 """
                     INSERT INTO game_developers (game_id, developer_id) 
-                    VALUES (%s, %s)
+                    VALUES (%s, %s);
                 """,
                 (game_id, developer_id)
             )
@@ -193,7 +193,7 @@ def get_developers_for_game_db(con, game_id: int):
                     SELECT d.* 
                     FROM developers d 
                     INNER JOIN game_developers gd ON d.id = gd.developer_id 
-                    WHERE gd.game_id = %s
+                    WHERE gd.game_id = %s;
                 """,
                 (game_id,)
             )
@@ -211,7 +211,7 @@ def get_games_by_developer_db(con, developer_id: int):
                     SELECT g.* 
                     FROM games g 
                     INNER JOIN game_developers gd ON g.id = gd.game_id 
-                    WHERE gd.developer_id = %s
+                    WHERE gd.developer_id = %s;
                 """,
                 (developer_id,)
             )

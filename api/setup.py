@@ -14,8 +14,8 @@ def get_connection():
         dbname=DATABASE_NAME,
         user="postgres",  # change if needed
         password=PASSWORD,
-        host=os.getenv("DB_HOST"),  # Use the DB_HOST variable
-        port=os.getenv("DB_PORT"),  # Use the DB_PORT variable
+        host=os.getenv("DB_HOST", "db"),  # Use the DB_HOST variable
+        port=os.getenv("DB_PORT", "5432"),  # Use the DB_PORT variable
     )
 
 
@@ -28,7 +28,7 @@ def create_tables():
             genre VARCHAR(100) NOT NULL,
             platform VARCHAR(100) NOT NULL,
             release_year INT NOT NULL
-        );
+    );
     """
 
     create_developers_table_query = """
@@ -36,7 +36,7 @@ def create_tables():
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             founded_year INT NOT NULL
-        );
+    );
     """
 
     create_publishers_table_query = """
@@ -44,7 +44,7 @@ def create_tables():
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             country VARCHAR(100) NOT NULL
-        );
+    );
     """
 
     create_reviews_table_query = """
@@ -54,7 +54,7 @@ def create_tables():
             reviewer VARCHAR(255) NOT NULL,
             rating FLOAT NOT NULL CHECK (rating >= 0 AND rating <= 10),
             comment TEXT
-        );
+    );
     """
 
     create_game_developers_table_query = """
@@ -62,7 +62,7 @@ def create_tables():
             game_id INT NOT NULL REFERENCES games(id),
             developer_id INT NOT NULL REFERENCES developers(id),
             PRIMARY KEY (game_id, developer_id)
-        );
+    );
     """
 
     with con:
