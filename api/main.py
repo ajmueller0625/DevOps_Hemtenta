@@ -190,5 +190,3 @@ def get_games_by_developer(developer_id: int):
         return games
     except DeveloperNotFoundError:
         raise HTTPException(detail="Developer not found", status_code=404)
-
-# Deploy Test
